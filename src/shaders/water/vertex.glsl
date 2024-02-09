@@ -1,6 +1,7 @@
 uniform float uTime;
 uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
+uniform float uBigWavesSpeed;
 
 void main()
 {
@@ -8,8 +9,8 @@ void main()
 
 
     // Elevation
-    float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime) *
-                      sin(modelPosition.z * uBigWavesFrequency.y + uTime) *
+    float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
+                      sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
                       uBigWavesElevation;
 
     modelPosition.y += elevation;
