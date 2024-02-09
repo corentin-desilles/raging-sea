@@ -3,6 +3,11 @@ uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
 
+uniform float uSmallWavesElevation;
+uniform float uSmallWavesFrequency;
+uniform float uSmallWavesSpeed;
+uniform float uSmallIterations;
+
 //create a mix between uDepthColor and uSurfaceColor according to the wave elevation (will be done in fragment)
 varying float vElevation;
 
@@ -97,14 +102,20 @@ void main()
 {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
-
     // Elevation
     float elevation = sin(modelPosition.x * uBigWavesFrequency.x + uTime * uBigWavesSpeed) *
                       sin(modelPosition.z * uBigWavesFrequency.y + uTime * uBigWavesSpeed) *
                       uBigWavesElevation;
 
-        // waves too high so we multiply the noise by 0.15
-    elevation += cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15;
+        // waves too high so we multiply the noise by 0.15 (uSmallWavesElevation)
+        //we use abs() to get realistic waves with rounded troughs and high crests
+        // for() loop using i to decrease elevation and increase frequency for more chaos
+
+    for(float i = 1.0; i <= uSmallIterations; i++)
+    {
+        elevation -= abs(cnoise(vec3(modelPosition.xz * uSmallWavesFrequency * i, uTime * uSmallWavesSpeed
+)) * uSmallWavesElevation / i);
+    }    
 
     modelPosition.y += elevation;
 
